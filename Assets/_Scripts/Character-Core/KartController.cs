@@ -17,6 +17,11 @@ public class KartController : MonoBehaviour
 
     public KartAction inputActions;
 
+    public bool isUsingJoyStick = true;
+
+    public FixedJoystick _moveJST;
+
+
     [Header("Photon Network")]
     private bool isOnNetwork = false;
 
@@ -114,6 +119,8 @@ public class KartController : MonoBehaviour
             _rigidbody.centerOfMass = vehicle_centre.localPosition;
 
         _sText = GameObject.FindGameObjectWithTag("GUI").transform.Find("PNL_UI").Find("TXT_SpeedMeter").GetComponent<TMP_Text>();
+
+        _moveJST = GameObject.FindGameObjectWithTag("GUI").transform.Find("PNL_Joystick").Find("JST_Move").GetComponent<FixedJoystick>();
 
         AchievementObserver fastObserver = new AchievementObserver(this.gameObject, new fastPoints());
         _publisher.AddObserver(fastObserver);
@@ -364,31 +371,41 @@ public class KartController : MonoBehaviour
 
         Vector2 moveVector = new();
 
-        if (Input.GetKey(KeyCode.W))
+        if(isUsingJoyStick)
         {
-            if (Input.GetKey(KeyCode.S))
+            Debug.Log("X: " + _moveJST.Horizontal + "| Y: " + _moveJST.Vertical);
+            moveVector.y = _moveJST.Vertical * 1.0f;
+            moveVector.x = _moveJST.Horizontal * 1.0f;
+        }
+        else
+        {
+            if (Input.GetKey(KeyCode.W))
+            {
+                if (Input.GetKey(KeyCode.S))
+                    moveVector.y = 0.0f;
+                else
+                    moveVector.y = 1.0f;
+            }
+            else if (Input.GetKey(KeyCode.S))
+                moveVector.y = -1.0f;
+            else
                 moveVector.y = 0.0f;
+
+
+
+            if (Input.GetKey(KeyCode.D))
+            {
+                if (Input.GetKey(KeyCode.A))
+                    moveVector.x = 0.0f;
+                else
+                    moveVector.x = 1.0f;
+            }
+            else if (Input.GetKey(KeyCode.A))
+                moveVector.x = -1.0f;
             else
-                moveVector.y = 1.0f;
-        }
-        else if (Input.GetKey(KeyCode.S))
-            moveVector.y = -1.0f;
-        else
-            moveVector.y = 0.0f;
-
-
-
-        if (Input.GetKey(KeyCode.D))
-        {
-            if (Input.GetKey(KeyCode.A))
                 moveVector.x = 0.0f;
-            else
-                moveVector.x = 1.0f;
         }
-        else if (Input.GetKey(KeyCode.A))
-            moveVector.x = -1.0f;
-        else
-            moveVector.x = 0.0f;
+        
         
         KartMove(moveVector);
     }
