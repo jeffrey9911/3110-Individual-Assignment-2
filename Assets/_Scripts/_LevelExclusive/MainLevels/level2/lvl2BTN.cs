@@ -38,11 +38,11 @@ public class lvl2BTN : MonoBehaviour
     {
         if(SceneConnect.instance.findCntxt("isOnNetwork") == "false")
         {
-            SceneManager.LoadScene("Level1");
+            SceneManager.LoadScene("Level2");
         }
         else if(SceneConnect.instance.findCntxt("isOnNetwork") == "true")
         {
-            PhotonNetwork.LoadLevel("Level1");
+            PhotonNetwork.LoadLevel("Level2");
         }
 
     }
