@@ -34,6 +34,19 @@ public class lvl2BTN : MonoBehaviour
         Debug.Log("KART 2 SELECTED!");
     }
 
+    public void controllerOnClick()
+    {
+        if (SceneConnect.instance.findCntxt("kartID") != null)
+        {
+            SceneConnect.instance.changeCntxt("kartID", "-1");
+        }
+        else
+        {
+            SceneConnect.instance.addCntxt("kartID", "-1");
+        }
+        Debug.Log("Controller Selected!");
+    }
+
     public void startOnClick()
     {
         if(SceneConnect.instance.findCntxt("isOnNetwork") == "false")

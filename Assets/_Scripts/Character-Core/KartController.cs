@@ -111,16 +111,21 @@ public class KartController : MonoBehaviour
 
         //inputActions.Player.Move.performed += context => KartMove(context.ReadValue<Vector2>());
 
-        GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraController>()._cameraTrans = this.transform.Find("camController").Find("camTrans").transform;
-        GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraController>()._cameraRotator = this.transform.Find("camController").transform;
+        if (!PunManager.instance.isController)
+        {
+            GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraController>()._cameraTrans = this.transform.Find("camController").Find("camTrans").transform;
+        
+            GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraController>()._cameraRotator = this.transform.Find("camController").transform;
+        }
+        
 
         _rigidbody = GetComponent<Rigidbody>();
         if (vehicle_centre != null && _rigidbody != null)
             _rigidbody.centerOfMass = vehicle_centre.localPosition;
 
-        _sText = GameObject.FindGameObjectWithTag("GUI").transform.Find("PNL_UI").Find("TXT_SpeedMeter").GetComponent<TMP_Text>();
+        //_sText = GameObject.FindGameObjectWithTag("GUI").transform.Find("PNL_UI").Find("TXT_SpeedMeter").GetComponent<TMP_Text>();
 
-        _moveJST = GameObject.FindGameObjectWithTag("GUI").transform.Find("PNL_Joystick").Find("JST_Move").GetComponent<FixedJoystick>();
+        _moveJST = GameObject.Find("CVS_Controller").transform.Find("PNL_Joystick").transform.Find("JST_Move").GetComponent<FixedJoystick>();
 
         AchievementObserver fastObserver = new AchievementObserver(this.gameObject, new fastPoints());
         _publisher.AddObserver(fastObserver);
@@ -286,7 +291,7 @@ public class KartController : MonoBehaviour
     // Start is called before the first frame update
     
 
-    private void KartMove(Vector2 moveVec)
+    public void KartMove(Vector2 moveVec)
     {
         //Debug.Log(kartMoveVector);
 
@@ -368,10 +373,10 @@ public class KartController : MonoBehaviour
     private void KartDrive()
     {
         isHandbrake = Input.GetKey(KeyCode.Space);
-
+        
         Vector2 moveVector = new();
 
-        if(isUsingJoyStick)
+        if(PunManager.instance.isController)
         {
             Debug.Log("X: " + _moveJST.Horizontal + "| Y: " + _moveJST.Vertical);
             moveVector.y = _moveJST.Vertical * 1.0f;
@@ -408,6 +413,7 @@ public class KartController : MonoBehaviour
         
         
         KartMove(moveVector);
+        
     }
 
     

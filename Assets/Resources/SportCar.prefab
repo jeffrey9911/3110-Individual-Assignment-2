@@ -251,6 +251,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _gameManager: {fileID: 0}
+  isUsingJoyStick: 1
+  _moveJST: {fileID: 0}
   vehicle_centre: {fileID: 6027541503756524665}
   _sText: {fileID: 0}
   wheels:

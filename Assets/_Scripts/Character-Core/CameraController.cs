@@ -19,43 +19,44 @@ public class CameraController : MonoBehaviour
 
     private bool cameraRot()
     {
-        if(Input.GetKey(KeyCode.LeftArrow))
+        if(!PunManager.instance.isController)
         {
-            if (!Input.GetKey(KeyCode.RightArrow))
+            if (Input.GetKey(KeyCode.LeftArrow))
             {
-                _cameraRotator.localEulerAngles = new Vector3(0.0f, 90.0f, 0.0f);
+                if (!Input.GetKey(KeyCode.RightArrow))
+                {
+                    _cameraRotator.localEulerAngles = new Vector3(0.0f, 90.0f, 0.0f);
+                    return true;
+                }
+            }
+            else if (Input.GetKey(KeyCode.RightArrow))
+            {
+                _cameraRotator.localEulerAngles = new Vector3(0.0f, -90.0f, 0.0f);
                 return true;
             }
+            else if (Input.GetKey(KeyCode.DownArrow))
+            {
+                _cameraRotator.localEulerAngles = new Vector3(0.0f, 180.0f, 0.0f);
+                return true;
+            }
+            else
+            {
+                _cameraRotator.localEulerAngles = new Vector3(0.0f, 0.0f, 0.0f);
+            }
         }
-        else if(Input.GetKey(KeyCode.RightArrow))
-        {
-            _cameraRotator.localEulerAngles = new Vector3(0.0f, -90.0f, 0.0f);
-            return true;
-        }
-        else if(Input.GetKey(KeyCode.DownArrow))
-        {
-            _cameraRotator.localEulerAngles = new Vector3(0.0f, 180.0f, 0.0f);
-            return true;
-        }
-        else
-        {
-            _cameraRotator.localEulerAngles = new Vector3(0.0f, 0.0f, 0.0f);
-        }
+        
         return false;
     }
 
     private void speedCam()
     {
-        float kartSpeed = PunManager.instance._spawnedPlayer.GetComponent<KartController>().getSpeed();
+        float kartSpeed = GameObject.Find("SportCar(Clone)").GetComponent<KartController>().getSpeed();
         _cameraTrans.localEulerAngles = new Vector3(20.0f - (kartSpeed * 20.0f / adaptiveCameraModifier), 0.0f, 0.0f);
     }
 
     private void Awake()
     {
-        if(_cameraTrans == null)
-        {
-            _cameraTrans = this.transform.Find("");
-        }
+        
 
         if(this == Camera.main)
         {
@@ -63,24 +64,33 @@ public class CameraController : MonoBehaviour
         }
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
-        float camRotMult = 1.0f;
-        float camFolMult = 1.0f;
-        if(cameraRot())
+        if(_cameraTrans == null)
         {
-            camRotMult = 3.0f;
-            camFolMult = 3.0f;
+            _cameraTrans = GameObject.Find("SportCar(Clone)").transform.Find("camController").Find("camTrans").transform;
+            _cameraRotator = GameObject.Find("SportCar(Clone)").transform.Find("camController").transform;
         }
+        else
+        {
+            /*
+            float camRotMult = 1.0f;
+            float camFolMult = 1.0f;
+            if (cameraRot())
+            {
+                camRotMult = 3.0f;
+                camFolMult = 3.0f;
+            }*/
 
-        speedCam();
+            speedCam();
 
-        _camera.transform.position = 
-            Vector3.Lerp(_camera.transform.position, _cameraTrans.position,
-                        Vector3.Distance(_camera.transform.position, _cameraTrans.position) * Time.deltaTime * cameraFollowSensitivity * camFolMult);
+            _camera.transform.position =
+                Vector3.Lerp(_camera.transform.position, _cameraTrans.position,
+                            Vector3.Distance(_camera.transform.position, _cameraTrans.position) * Time.deltaTime * cameraFollowSensitivity );
 
-        _camera.transform.rotation =
-            Quaternion.Lerp(_camera.transform.rotation, Quaternion.LookRotation(_cameraTrans.forward),
-                                (_camera.transform.forward - _cameraTrans.forward).magnitude * Time.deltaTime * cameraRotateSensitivity * camRotMult);
+            _camera.transform.rotation =
+                Quaternion.Lerp(_camera.transform.rotation, Quaternion.LookRotation(_cameraTrans.forward),
+                                    (_camera.transform.forward - _cameraTrans.forward).magnitude * Time.deltaTime * cameraRotateSensitivity);
+        }
     }
 }
