@@ -12,6 +12,8 @@ public class PunManager : MonoBehaviour
 
     public bool isOnNetWork = false;
 
+    public bool isController = false;
+
     public GameObject _gameManager;
 
     public GameObject _kart1;
@@ -46,7 +48,18 @@ public class PunManager : MonoBehaviour
                     break;
 
                 case "1":
+                    isSpawnPlayer = false;
+                    PhotonNetwork.Instantiate("MainCamera", Vector3.zero, Quaternion.identity);
+                    GameObject.Find("CVS_Controller").SetActive(false);
+                    GameObject.Find("CVS_Player").SetActive(false);
+                    break;
+
+                case "-1":
+                    isSpawnPlayer = true;
                     _spawnPrefab = _kart2;
+                    isController = true;
+                    GameObject.Find("CVS_Controller").SetActive(true);
+                    GameObject.Find("CVS_Player").SetActive(false);
                     break;
 
                 default:
